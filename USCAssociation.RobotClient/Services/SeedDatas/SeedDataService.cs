@@ -26,16 +26,18 @@ namespace USCAssociation.RobotClient.Services.SeedDatas
         {
             if(_robotReplyRepository.GetAll().Any()==false)
             {
-                _robotReplyRepository.Insert(new RobotReply("团子", "团子在哦~"));
-                _robotReplyRepository.Insert(new RobotReply("借B站账号", "$(bilibili)", RobotReplyRange.Group));
-                _robotReplyRepository.Insert(new RobotReply("借(百度网盘|网盘|文库|百度文库)账号", "$(baidu)", RobotReplyRange.Group));
-                _robotReplyRepository.Insert(new RobotReply("借(金山|WPS|wps)账号", "$(wps)", RobotReplyRange.Group));
-                _robotReplyRepository.Insert(new RobotReply(@"(归还|还)账号", "$(return)"));
-                _robotReplyRepository.Insert(new RobotReply(@"([\\s\\S]*)借([\\s\\S]*)(会员|账号)([\\s\\S]*)", "添加团子好友，回复以下内容即可\n“借B站账号”\n“借百度网盘账号”"));
+                _robotReplyRepository.Insert(new RobotReply("^团子$", "团子在哦~"));
+                _robotReplyRepository.Insert(new RobotReply("([\\s\\S]*)今天天气([\\s\\S]*)", "$(weather)"));
+                _robotReplyRepository.Insert(new RobotReply("^借(b|B|Bilibili|bilibili)站账号$", "$(bilibili)", RobotReplyRange.Group));
+                _robotReplyRepository.Insert(new RobotReply("^借(百度网盘|网盘|文库|百度文库)账号$", "$(baidu)", RobotReplyRange.Group));
+                _robotReplyRepository.Insert(new RobotReply("^借(金山|WPS|wps)账号$", "$(wps)", RobotReplyRange.Group));
+                _robotReplyRepository.Insert(new RobotReply(@"^(归还|还)账号$", "$(return)"));
+                _robotReplyRepository.Insert(new RobotReply(@"([\\s\\S]*)借([\\s\\S]*)(会员|账号)([\\s\\S]*)", "回复以下内容即可\n“借B站账号”\n“借百度网盘账号”\n“借WPS账号”"));
             }
             if (_robotGroupRepository.GetAll().Any() == false)
             {
                 _robotGroupRepository.Insert(new RobotGroup(483089593));
+                _robotGroupRepository.Insert(new RobotGroup(930671397));
             }
         }
     }

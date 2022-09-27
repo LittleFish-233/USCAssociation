@@ -7,6 +7,7 @@ using USCAssociation.RobotClient.DataModels.Messages;
 using USCAssociation.RobotClient.DataModels.Robots;
 using USCAssociation.RobotClient.DataModels.SMS;
 using USCAssociation.RobotClient.DataRepositories;
+using USCAssociation.RobotClient.Services.ExternalDatas;
 using USCAssociation.RobotClient.Services.SensitiveWords;
 using USCAssociation.RobotClient.Services.SMSVerifications;
 using USCAssociation.RobotClient.Tools.Extensions;
@@ -21,9 +22,10 @@ namespace USCAssociation.RobotClient.Services.Messages
         private readonly IConfiguration _configuration;
         private readonly ILogger<MessageService> _logger;
         private readonly ISMSVerificationService _SMSVerificationService;
+        private readonly IExternalDataService _externalDataService;
 
         public MessageService(IRepository<RobotReply> robotReplyRepository, IRepository<RobotFace> robotFaceRepository,
-            ILogger<MessageService> logger, ISMSVerificationService SMSVerificationService,
+            ILogger<MessageService> logger, ISMSVerificationService SMSVerificationService, IExternalDataService externalDataService,
         IConfiguration configuration,
             ISensitiveWordService sensitiveWordService)
         {
@@ -33,6 +35,8 @@ namespace USCAssociation.RobotClient.Services.Messages
             _configuration = configuration;
             _robotFaceRepository = robotFaceRepository;
             _SMSVerificationService = SMSVerificationService;
+            _externalDataService = externalDataService;
+
         }
 
         /// <summary>
@@ -262,7 +266,7 @@ namespace USCAssociation.RobotClient.Services.Messages
                 {
                     "time" => DateTime.Now.ToCstTime().ToString("HH:mm"),
                     "qq" => qq.ToString(),
-                    "weather" => _configuration["weather"],
+                    "weather" => await _externalDataService.GetWeather(),
                     "sender" => name,
                     "n" => "\n",
                     "r" => "\r",
@@ -334,7 +338,7 @@ namespace USCAssociation.RobotClient.Services.Messages
                 try
                 {
                     var borrower= _SMSVerificationService.AddBorrower(qq, type);
-                    return $"成功借出{type.GetDisplayName()}账号，添加团子好友后团子才能告诉你验证码哦~\n记得在{borrower.EndTime:M月dd日H点mm分}前归还账号哦~\n回复“归还账号”即可~";
+                    return $"成功借出{type.GetDisplayName()}账号：{_configuration["PnoneNumber"]}\n添加团子好友后团子才能告诉你验证码哦~\n记得在{borrower.EndTime:M月dd日H点mm分}前归还账号哦~\n回复“归还账号”即可~";
                 }
                 catch (Exception ex)
                 {
